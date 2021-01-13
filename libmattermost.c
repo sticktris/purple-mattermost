@@ -1666,11 +1666,18 @@ mm_process_message_image_response(MattermostAccount *ma, JsonNode *node, gpointe
 	image = purple_image_new_from_data(response_dup,response_len);
 	image_id = purple_image_store_add(image);
 
+  gchar *url;
+	if (mmfile->uri && ma->client_config->public_link) {
+    url = g_strconcat(mmfile->uri, NULL);
+  } else {
+    url = g_strconcat((purple_account_get_bool(ma->account, "use-ssl", TRUE)?"https://":"http://"), ma->server,"/api/v4/files/", mmfile->id, NULL);
+  }
 	if (purple_account_get_bool(ma->account,"show-full-images", FALSE)) {
-		anchor = g_strdup_printf("<img id='%d' src='%s' />", image_id, mmfile->uri);
+		anchor = g_strdup_printf("<img id='%d' src='%s' />", image_id, url);
 	} else {
-		anchor = g_strdup_printf("<a href='%s'>%s <img id='%d' src='%s' /></a>", mmfile->uri, _("[view full image]"), image_id, mmfile->uri);
+		anchor = g_strdup_printf("<a href='%s'>%s <img id='%d' src='%s/preview' /></a>", url, _("[view full image]"), image_id, url);
 	}
+  g_free(url);
 
 	mm_purple_message_file_send(ma, mmfile, anchor, TRUE);
 
@@ -1739,8 +1746,11 @@ mm_file_metadata_response(MattermostAccount *ma, JsonNode *node, gpointer user_d
 		const gchar *team_name = g_hash_table_lookup(ma->teams, team_id);
 		gchar *link_error_str = g_strconcat("[error: public links disabled on server, cannot get file: ",mmfile->name, NULL);
 		if (team_name) {
-			gchar *url = g_strconcat((purple_account_get_bool(ma->account, "use-ssl", TRUE)?"https://":"http://"), ma->server,"/", team_name, "/pl/", mmfile->mmchlink->post_id, NULL);
-			anchor = g_strconcat(link_error_str, ", visit ","<a href=\"", url, "\">", url, "</a> to access the file]" , NULL);
+			gchar *url = g_strconcat((purple_account_get_bool(ma->account, "use-ssl", TRUE)?"https://":"http://"), ma->server,"/api/v4/files/", mmfile->id, NULL);
+      anchor = g_strconcat("<a href='", url, "'>",mmfile->name,"</a>", NULL);
+			g_free(url);
+			url = g_strconcat((purple_account_get_bool(ma->account, "use-ssl", TRUE)?"https://":"http://"), ma->server,"/", team_name, "/pl/", mmfile->mmchlink->post_id, NULL);
+			anchor = g_strconcat(anchor, " [<a href=\"", url, "\">message</a>]", NULL);
 			g_free(url);
 		} else {
 			anchor = g_strconcat(link_error_str, "]", NULL);

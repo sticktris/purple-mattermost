@@ -1951,6 +1951,13 @@ mm_process_room_message(MattermostAccount *ma, JsonObject *post, JsonObject *dat
 				}
 			}
 
+      const gchar *parent_id = json_object_get_string_member(post, "parent_id");
+      if (!purple_strequal(parent_id, "")) {
+				gchar *tmp = g_strconcat("⤷  ", message, NULL);
+				g_free(message);
+				message = tmp;
+      }
+
 //FIXME JAREK: dont know the TEAM here
 
 			if ((channel_type != NULL && *channel_type != MATTERMOST_CHANNEL_DIRECT) || g_hash_table_contains(ma->group_chats, channel_id)) {

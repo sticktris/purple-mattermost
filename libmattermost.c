@@ -2665,6 +2665,7 @@ mm_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	data = json_object_new();
 	json_object_set_string_member(data, "status", setstatus);
+	json_object_set_string_member(data, "user_id", ma->self->user_id);
 	postdata = json_object_to_string(data);
 
 	url = mm_build_url(ma,"/users/me/status");

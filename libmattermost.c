@@ -1951,8 +1951,8 @@ mm_process_room_message(MattermostAccount *ma, JsonObject *post, JsonObject *dat
 				}
 			}
 
-      const gchar *parent_id = json_object_get_string_member(post, "parent_id");
-      if (!purple_strequal(parent_id, "")) {
+      const gchar *root_id = json_object_get_string_member(post, "root_id");
+      if (!purple_strequal(root_id, "")) {
 				gchar *tmp = g_strconcat("⤷  ", message, NULL);
 				g_free(message);
 				message = tmp;

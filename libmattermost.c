@@ -2857,7 +2857,8 @@ mm_login(PurpleAccount *account)
 		} else {
 			json_object_set_string_member(data, "login_id", ma->username);
 			json_object_set_string_member(data, "password", purple_connection_get_password(pc));
-			json_object_set_string_member(data, "token", ""); //TODO 2FA
+			const gchar *mfa_token = purple_account_get_string(account, "mfa-token", NULL);
+			json_object_set_string_member(data, "token", mfa_token); //TODO Better 2FA
 			
 			postdata = json_object_to_string(data);
 			
@@ -4665,6 +4666,9 @@ mm_add_account_options(GList *account_options)
 
 	//FIXME: this one shall depend on above one !
 	option = purple_account_option_bool_new(N_("Show full images in messages"), "show-full-images", FALSE);
+	account_options = g_list_append(account_options, option);
+
+	option = purple_account_option_string_new(N_("MFA token"), "mfa-token", "");
 	account_options = g_list_append(account_options, option);
 
 	return account_options;

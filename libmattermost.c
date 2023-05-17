@@ -2674,6 +2674,8 @@ mm_set_status(PurpleAccount *account, PurpleStatus *status)
 	// when posting status changes for online for ~ 30 secs
 	// then changes back again.
 
+	if (ma->self == NULL) return;
+
 	if (purple_strequal(status_id, "invisible")) {
 		setstatus = g_strdup("offline");
 	} else {

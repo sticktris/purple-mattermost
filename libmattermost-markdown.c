@@ -83,7 +83,7 @@ static MattermostRegexElement mm_regexes[MM_MAX_REGEX]={
 	// (inline) code block 
 	{
 	.find = "<code>(.*)</code>",
-	.repl = "<font back=\"#E1E1E1\">\\1</font>",
+	.repl = "<font back=\"#E1E1E1\" color=\"#000000\">\\1</font>",
 	.regex = NULL,
 	},
 	// title1
